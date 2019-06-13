@@ -1,1 +1,16 @@
-# ongrjoe.github.io
+# Development Note
+
+## LINUX
+
+
+***
+## PYTHON
+### matplotlib
+
+
+***
+## FORTRAN
+
+
+
+***
