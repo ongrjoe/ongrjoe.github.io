@@ -5,7 +5,7 @@
 * [Github 위키 관리](https://github.com/ongrjoe/ongrjoe.github.io/wiki/Github-%EC%9C%84%ED%82%A4-%EA%B4%80%EB%A6%AC)
 
 ### Conda
-* [강좌★★★★★](https://graspthegist.com/post/conda-revisited/)
+* ★★★★★ https://graspthegist.com/post/conda-revisited/
 
 ***
 ## PYTHON
