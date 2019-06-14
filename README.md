@@ -12,6 +12,9 @@
 
 ***
 ## PYTHON
+### 기본문법
+* Dictionary
+
 ### matplotlib
 * [Matplotlib](https://github.com/ongrjoe/ongrjoe.github.io/wiki/Matplotlib)
 * [WRF 태풍 트랙 추출](https://github.com/ongrjoe/ongrjoe.github.io/wiki/WRF-%ED%83%9C%ED%92%8D-%ED%8A%B8%EB%9E%99-%EC%B6%94%EC%B6%9C)
