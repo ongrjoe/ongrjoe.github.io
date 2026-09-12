@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멤버 방배치 시스템</title>
+    <style>
+        :root {
+            --bg: #f4f7f6;
+            --panel: #ffffff;
+            --muted: #6b7280;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --line: #dfe3e8;
+            --danger: #dc3545;
+            --danger-dark: #bd2130;
+            --shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            padding: 16px;
+            margin: 0;
+            background: var(--bg);
+            color: #1f2937;
+        }
+
+        h2, h3 { margin: 0 0 14px; }
+
+        .app-shell {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .header-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-bottom: 2px solid var(--line);
+            margin-bottom: 16px;
+        }
+
+        .tab {
+            padding: 12px 16px;
+            cursor: pointer;
+            background: #edf2f7;
+            border: 1px solid var(--line);
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .tab.active {
+            background: #fff;
+            border-top: 3px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--panel);
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: 0 12px 12px 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .tab-content.active { display: block; }
+
+        .file-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px 14px;
+            cursor: pointer;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .file-upload input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        #file-status {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        #room-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        }
+
+        .room {
+            border: 2px dashed #aab;
+            min-height: 150px;
+            padding: 10px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s;
+        }
+
+        .room.empty-room {
+            border: 1px solid transparent;
+            background: transparent !important;
+            min-height: 150px;
+        }
+
+        .room-header {
+            font-weight: bold;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            font-size: 15px;
+        }
+
+        .member-container {
+            flex-grow: 1;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .member {
+            border: 1px solid rgba(0,0,0,0.15);
+            padding: 6px 8px;
+            border-radius: 8px;
+            cursor: grab;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            font-size: 12px;
+            line-height: 1.5;
+            transition: transform 0.1s;
+        }
+
+        .member:hover { transform: translateY(-1px); box-shadow: 1px 2px 5px rgba(0,0,0,0.15); }
+        .member:active { cursor: grabbing; transform: translateY(0); }
+        .member strong { font-size: 13px; color: #222; }
+        .member small { font-size: 11px; color: #555; }
+
+        .layout-inputs {
+            margin-bottom: 20px;
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+        }
+
+        .setup-grid {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        }
+
+        .setup-cell {
+            border: 1px solid var(--line);
+            padding: 10px;
+            background: #fff;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .setup-cell input {
+            width: 100%;
+            margin-top: 5px;
+            text-align: center;
+            font-size: 13px;
+            padding: 6px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+        }
+
+        input, select, button {
+            padding: 10px 12px;
+            margin: 5px 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        input, select { background: #fff; }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s ease;
+        }
+
+        button:hover { background: var(--primary-dark); }
+        button.btn-danger { background: var(--danger); }
+        button.btn-danger:hover { background: var(--danger-dark); }
+        button.btn-secondary { background: #6c757d; }
+        button.btn-secondary:hover { background: #5a6268; }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+        }
+
+        .form-group > * {
+            flex: 1 1 160px;
+            min-width: 140px;
+        }
+
+        .member-table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .member-table {
+            width: 100%;
+            min-width: 720px;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .member-table th, .member-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .member-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .member-table tr:hover { background-color: #f9f9f9; }
+        .member-table input, .member-table select {
+            padding: 6px;
+            margin: 0;
+            width: 90%;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+
+            .header-bar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .file-actions {
+                width: 100%;
+            }
+
+            .file-upload,
+            .file-actions button,
+            .tab,
+            .form-group > *,
+            .layout-inputs input,
+            .layout-inputs button {
+                width: 100%;
+            }
+
+            .tabs {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .tab-content {
+                padding: 12px;
+            }
+
+            .layout-inputs {
+                padding: 12px;
+            }
+
+            .member-table {
+                min-width: 640px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <div class="header-bar">
+            <h2>🏢 오피스 방배치 관리 시스템</h2>
+            <div class="file-actions">
+                <label class="file-upload">
+                    <input type="file" id="json-upload" accept=".json,application/json">
+                    📂 JSON 업로드
+                </label>
+                <button class="btn-secondary" onclick="downloadCurrentData()">📥 JSON 다운로드</button>
+            </div>
+        </div>
+
+        <div id="file-status">현재 파일: room_data.json</div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(1)">1. 방배치 보기 (배치도)</div>
+            <div class="tab" onclick="switchTab(2)">2. 방 레이아웃 설정</div>
+            <div class="tab" onclick="switchTab(3)">3. 멤버 등록 및 관리</div>
+        </div>
+
+        <div id="tab1" class="tab-content active">
+            <h3>현재 방배치 현황 <small style="color: #666; font-weight:normal; font-size:13px;">(멤버를 드래그하여 다른 방으로 이동하세요)</small></h3>
+            <div id="room-grid"></div>
+        </div>
+
+        <div id="tab2" class="tab-content">
+            <h3>방 레이아웃 설정</h3>
+            <div class="layout-inputs">
+                <strong>행(가로줄):</strong> <input type="number" id="layout-rows" min="1" value="2" style="width:60px;"> 칸 &nbsp;&nbsp;|&nbsp;&nbsp;
+                <strong>열(세로줄):</strong> <input type="number" id="layout-cols" min="1" value="3" style="width:60px;"> 칸
+                <button onclick="generateSetupGrid()" style="margin-left:10px;">격자 생성/변경하기</button>
+                <span style="color:#666; font-size:12px; margin-left:15px;">* 격자 크기 변경 시 기존 방 입력 내용이 초기화될 수 있습니다.</span>
+            </div>
+            <div id="setup-grid-container" class="setup-grid"></div>
+            <button onclick="saveLayout()" style="margin-top:20px; padding:10px 20px;" id="btn-save-layout">✅ 레이아웃 및 방 정보 저장</button>
+        </div>
+
+        <div id="tab3" class="tab-content">
+            <h3>새 멤버 추가</h3>
+            <div class="form-group">
+                <input type="text" id="m-name" placeholder="이름 (예: 홍길동)">
+                <input type="text" id="m-phone" placeholder="전화번호 (예: 010-1234-5678)">
+                <input type="text" id="m-position" placeholder="직책 (예: 팀장)">
+                <select id="m-room"></select>
+                <button onclick="addMember()">💾 멤버 등록</button>
+            </div>
+
+            <h3 style="margin-top:30px;">등록된 멤버 리스트 <small style="color:#666; font-weight:normal; font-size:13px;">(직접 내용을 수정 후 [수정]을 누르거나 [삭제]할 수 있습니다)</small></h3>
+            <div class="member-table-wrap">
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>전화번호</th>
+                            <th>직책</th>
+                            <th>배정된 방</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="member-list-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="room.js"></script>
+</body>
+</html>
