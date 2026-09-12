@@ -2,8 +2,9 @@
 ## LINUX
 ### Github
 * [Github 위키 관리](https://github.com/ongrjoe/ongrjoe.github.io/wiki/Github-%EC%9C%84%ED%82%A4-%EA%B4%80%EB%A6%AC)
+* ★dd
 * ★
-* ★
+* room.html
 
 ### Conda
 * ★★★★★ https://graspthegist.com/post/conda-revisited/
